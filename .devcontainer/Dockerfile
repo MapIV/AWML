@@ -5,7 +5,7 @@ FROM $BASE_IMAGE
 ENV SHELL /bin/bash
 
 # User settings
-ARG USERNAME=autoware
+ARG USERNAME=pe
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 

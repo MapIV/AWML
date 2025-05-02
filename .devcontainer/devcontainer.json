@@ -6,7 +6,7 @@
       "BASE_IMAGE": "autoware-ml"
     }
   },
-  "remoteUser": "autoware",
+  "remoteUser": "pe",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   "workspaceFolder": "/workspace",
   "hostRequirements": {
@@ -17,6 +17,7 @@
     "--rm",
     "--name=autoware-ml",
     "--privileged",
+    "--user=1000:1000", 
     "--env",
     "DISPLAY=${env:DISPLAY}",
     "--env",
@@ -32,7 +33,7 @@
     "--volume=/tmp/.X11-unix/:/tmp/.X11-unix",
     "--volume=/etc/localtime:/etc/localtime:ro",
     "--volume=/dev/dri:/dev/dri:ro",
-    "--volume=${env:HOME}/autoware_data:/home/autoware/autoware_data",
+    "--volume=/home/pe/iSSD1/mazda/FY25/nuscenes/v2:/workspace/data:rw",
     "--gpus",
     "all",
     "--shm-size=64gb"
