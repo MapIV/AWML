@@ -1,4 +1,4 @@
-auto_scale_lr = dict(base_batch_size=4, enable=False)
+auto_scale_lr = dict(base_batch_size=2, enable=False)
 backend_args = None
 camera_panels = [
     'data/CAM_FRONT',
@@ -455,7 +455,7 @@ name_mapping = dict(
 }
     )
 num_class = 5
-num_workers = 32
+num_workers = 12
 optim_wrapper = dict(
     clip_grad=dict(max_norm=35, norm_type=2),
     optimizer=dict(lr=0.0003, type='AdamW', weight_decay=0.01),
@@ -509,10 +509,10 @@ randomness = dict(deterministic=False, diff_rank_seed=False, seed=0)
 resume = False
 sweeps_num = 1
 sync_bn = 'torch'
-test_batch_size = 2
+test_batch_size = 1
 test_cfg = dict()
 test_dataloader = dict(
-    batch_size=2,
+    batch_size=1,
     dataset=dict(
         ann_file='nuscenes_infos_val.pkl',
         backend_args=None,
@@ -579,13 +579,13 @@ test_dataloader = dict(
         ],
         test_mode=True,
         type='T4Dataset'),
-    num_workers=32,
+    num_workers = 12,
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
 test_evaluator = dict(
     ann_file='data/nuscenes/nuscenes_infos_val.pkl',
     backend_args=None,
-    data_root='',
+    data_root='data/nuscenes',
     metric='bbox',
     type='NuScenesMetric')
 test_pipeline = [
@@ -626,7 +626,7 @@ test_pipeline = [
         ],
         type='Pack3DDetInputs'),
 ]
-train_batch_size = 8
+train_batch_size = 4
 train_cfg = dict(
     by_epoch=True,
     dynamic_intervals=[
@@ -638,9 +638,9 @@ train_cfg = dict(
     max_epochs=50,
     val_interval=5)
 train_dataloader = dict(
-    batch_size=8,
+    batch_size=2,
     dataset=dict(
-        ann_file='data/nuscenes/nuscenes_infos_train.pkl',
+        ann_file='nuscenes_infos_train.pkl',
         backend_args=None,
         box_type_3d='LiDAR',
         class_names=[
@@ -651,7 +651,7 @@ train_dataloader = dict(
             'pedestrian',
         ],
         data_prefix=dict(pts="samples/LIDAR_TOP", img="", sweeps="samples/LIDAR_TOP"),
-        data_root='',
+        data_root='data/nuscenes/',
         metainfo=dict(classes=[
             'car',
             'truck',
@@ -750,10 +750,10 @@ train_dataloader = dict(
         ],
         test_mode=False,
         type='T4Dataset'),
-    num_workers=32,
+    num_workers = 12,
     persistent_workers=True,
     sampler=dict(shuffle=True, type='DefaultSampler'))
-train_gpu_size = 2
+train_gpu_size = 1
 train_pipeline = [
     dict(
         backend_args=None,
@@ -836,9 +836,9 @@ train_pipeline = [
 ]
 val_cfg = dict()
 val_dataloader = dict(
-    batch_size=2,
+    batch_size=1,
     dataset=dict(
-        ann_file='data/nuscenes/nuscenes_infos_val.pkl',
+        ann_file='nuscenes_infos_val.pkl',
         backend_args=None,
         box_type_3d='LiDAR',
         class_names=[
@@ -849,7 +849,7 @@ val_dataloader = dict(
             'pedestrian',
         ],
         data_prefix=dict(pts="samples/LIDAR_TOP", img="", sweeps="samples/LIDAR_TOP"),
-        data_root='',
+        data_root='data/nuscenes/',
         metainfo=dict(classes=[
             'car',
             'truck',
@@ -903,14 +903,13 @@ val_dataloader = dict(
         ],
         test_mode=True,
         type='T4Dataset'),
-    num_workers=32,
+    num_workers=12,
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
 val_evaluator = dict(
     ann_file='data/nuscenes/nuscenes_infos_val.pkl',
     backend_args=None,
-    data_root='',
-    filter_attributes=[],
+    data_root='data/nuscenes/',
     metric='bbox',
     type='NuScenesMetric')
 val_interval = 5
