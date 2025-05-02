@@ -17,14 +17,14 @@ from shapely.geometry import MultiPoint, box
 nus_categories = (
     "car",
     "truck",
-    "trailer",
+    # "trailer",
     "bus",
-    "construction_vehicle",
+    # "construction_vehicle",
     "bicycle",
-    "motorcycle",
+    # "motorcycle",
     "pedestrian",
-    "traffic_cone",
-    "barrier",
+    # "traffic_cone",
+    # "barrier",
 )
 
 nus_attributes = (
@@ -38,6 +38,15 @@ nus_attributes = (
     "vehicle.stopped",
     "None",
 )
+
+camera_types = [
+    "CAM_FRONT",
+    "CAM_FRONT_RIGHT",
+    # "CAM_FRONT_LEFT",
+    # "CAM_BACK",
+    # "CAM_BACK_LEFT",
+    # "CAM_BACK_RIGHT",
+]
 
 
 def create_nuscenes_infos(root_path, info_prefix, version="v1.0-trainval", max_sweeps=10):
@@ -194,14 +203,6 @@ def _fill_trainval_infos(nusc, train_scenes, val_scenes, test=False, max_sweeps=
         e2g_r_mat = Quaternion(e2g_r).rotation_matrix
 
         # obtain 6 image's information per frame
-        camera_types = [
-            "CAM_FRONT",
-            "CAM_FRONT_RIGHT",
-            "CAM_FRONT_LEFT",
-            "CAM_BACK",
-            "CAM_BACK_LEFT",
-            "CAM_BACK_RIGHT",
-        ]
         for cam in camera_types:
             cam_token = sample["data"][cam]
             cam_path, _, cam_intrinsic = nusc.get_sample_data(cam_token)
@@ -326,14 +327,6 @@ def export_2d_annotation(root_path, info_path, version, mono3d=True):
             Default: True.
     """
     # get bbox annotations for camera
-    camera_types = [
-        "CAM_FRONT",
-        "CAM_FRONT_RIGHT",
-        "CAM_FRONT_LEFT",
-        "CAM_BACK",
-        "CAM_BACK_LEFT",
-        "CAM_BACK_RIGHT",
-    ]
     nusc_infos = mmengine.load(info_path)["infos"]
     nusc = NuScenes(version=version, dataroot=root_path, verbose=True)
     # info_2d_list = []

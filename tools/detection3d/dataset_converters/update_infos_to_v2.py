@@ -227,10 +227,10 @@ def generate_nuscenes_camera_instances(info, nusc):
     camera_types = [
         "CAM_FRONT",
         "CAM_FRONT_RIGHT",
-        "CAM_FRONT_LEFT",
-        "CAM_BACK",
-        "CAM_BACK_LEFT",
-        "CAM_BACK_RIGHT",
+        # "CAM_FRONT_LEFT",
+        # "CAM_BACK",
+        # "CAM_BACK_LEFT",
+        # "CAM_BACK_RIGHT",
     ]
 
     empty_multicamera_instance = get_empty_multicamera_instances(camera_types)
@@ -262,14 +262,14 @@ def update_nuscenes_infos(pkl_path, out_dir):
         "classes": (
             "car",
             "truck",
-            "trailer",
+            # "trailer",
             "bus",
-            "construction_vehicle",
+            # "construction_vehicle",
             "bicycle",
-            "motorcycle",
+            # "motorcycle",
             "pedestrian",
-            "traffic_cone",
-            "barrier",
+            # "traffic_cone",
+            # "barrier",
         ),
     }
     nusc = NuScenes(version=data_list["metadata"]["version"], dataroot="./data/nuscenes", verbose=True)
@@ -305,7 +305,7 @@ def update_nuscenes_infos(pkl_path, out_dir):
             lidar2sensor[:3, 3:4] = -1 * np.matmul(rot.T, trans.reshape(3, 1))
             temp_lidar_sweep["lidar_points"]["lidar2sensor"] = lidar2sensor.astype(np.float32).tolist()
             temp_lidar_sweep["timestamp"] = ori_sweep["timestamp"] / 1e6
-            temp_lidar_sweep["lidar_points"]["lidar_path"] = ori_sweep["data_path"]
+            temp_lidar_sweep["lidar_points"]["lidar_path"] = Path(ori_sweep["data_path"]).name
             temp_lidar_sweep["sample_data_token"] = ori_sweep["sample_data_token"]
             temp_data_info["lidar_sweeps"].append(temp_lidar_sweep)
         temp_data_info["images"] = {}

@@ -157,8 +157,8 @@ def create_groundtruth_database(
 
     elif dataset_class_name == "NuScenesDataset":
         dataset_cfg.update(
-            use_valid_flag=True,
-            data_prefix=dict(pts="samples/LIDAR_TOP", img="", sweeps="sweeps/LIDAR_TOP"),
+            use_valid_flag=False,
+            data_prefix=dict(pts="samples/LIDAR_TOP", img="", sweeps="samples/LIDAR_TOP"),
             pipeline=[
                 dict(type="LoadPointsFromFile", coord_type="LIDAR", load_dim=5, use_dim=5),
                 dict(
@@ -490,7 +490,7 @@ class GTDatabaseCreater:
 
         elif self.dataset_class_name == "NuScenesDataset":
             dataset_cfg.update(
-                use_valid_flag=True,
+                use_valid_flag=False,
                 data_prefix=dict(pts="samples/LIDAR_TOP", img="", sweeps="sweeps/LIDAR_TOP"),
                 pipeline=[
                     dict(type="LoadPointsFromFile", coord_type="LIDAR", load_dim=5, use_dim=5),
