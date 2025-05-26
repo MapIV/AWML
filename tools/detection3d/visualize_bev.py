@@ -98,6 +98,7 @@ def parse_args():
     parser.add_argument("--split", type=str, default="val", choices=["train", "val"])
     parser.add_argument("--bbox-score", type=float, default=0.1)
     parser.add_argument("--out-dir", type=str, default="work_dirs/visualization")
+    parser.add_argument("--show-gt", action="store_true", help="Show ground truth boxes instead of predictions")
     args = parser.parse_args()
     return args
 
@@ -112,7 +113,7 @@ def main():
     cfg.test_dataloader.batch_size = 1
 
     # build dataset
-    dataset = Runner.build_dataloader(cfg.test_dataloader)
+    dataset = Runner.build_dataloader(cfg.val_dataloader)
 
     # build model and load checkpoint
     model = MODELS.build(cfg.model)
@@ -123,13 +124,18 @@ def main():
     for i, data in enumerate(dataset):
         lidar_path = data["data_samples"][0].lidar_path.split("/")
         file_name = "_".join(lidar_path[3:8])
-
         with autocast(enabled=True):
             outputs = model.test_step(data)
-        bboxes = outputs[0].pred_instances_3d["bboxes_3d"].tensor.detach().cpu()
-        scores = outputs[0].pred_instances_3d["scores_3d"].detach().cpu()
-        labels = outputs[0].pred_instances_3d["labels_3d"].detach().cpu()
-        if args.bbox_score is not None:
+        if args.show_gt:
+            bboxes = data['data_samples'][0].eval_ann_info["gt_bboxes_3d"].tensor.detach().cpu()
+            labels = data['data_samples'][0].eval_ann_info["gt_bboxes_labels"]
+            scores = None
+        else:
+            bboxes = outputs[0].pred_instances_3d["bboxes_3d"].tensor.detach().cpu()
+            scores = outputs[0].pred_instances_3d["scores_3d"].detach().cpu()
+            labels = outputs[0].pred_instances_3d["labels_3d"].detach().cpu()
+        
+        if args.bbox_score is not None and scores is not None:
             indices = scores >= args.bbox_score
             bboxes = bboxes[indices]
             scores = scores[indices]
