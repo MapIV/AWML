@@ -92,7 +92,7 @@ class CenterPointONNX(CenterPoint):
         input_features, voxel_dict = self._extract_random_features()
 
         # === pts_voxel_encoder ===
-        pth_onnx_pve = os.path.join(save_dir, "pts_voxel_encoder.onnx")
+        pth_onnx_pve = os.path.join(save_dir, "pts_voxel_encoder_centerpoint.onnx")
         torch.onnx.export(
             self.pts_voxel_encoder,
             (input_features,),
@@ -124,7 +124,7 @@ class CenterPointONNX(CenterPoint):
             self.pts_bbox_head,
         )
         # pts_backbone_neck_head = torch.jit.script(pts_backbone_neck_head)
-        pth_onnx_backbone_neck_head = os.path.join(save_dir, "pts_backbone_neck_head.onnx")
+        pth_onnx_backbone_neck_head = os.path.join(save_dir, "pts_backbone_neck_head_centerpoint.onnx")
         torch.onnx.export(
             pts_backbone_neck_head,
             (x,),
