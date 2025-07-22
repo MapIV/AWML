@@ -1,3 +1,11 @@
+### build
+DOCKER_BUILDKIT=1 docker build -t autoware-ml .
+
+### run
+docker run -it --rm --gpus '"device=0"' --shm-size=64g --name awml -p 6006:6006 -v $PWD/:/workspace -v $PWD/data:/workspace/data autoware-ml
+
+Or run in devcontainer
+
 ### convert
 ```
 python tools/detection3d/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes

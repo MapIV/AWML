@@ -6,7 +6,7 @@
       "BASE_IMAGE": "autoware-ml"
     }
   },
-  "remoteUser": "pe",
+  "remoteUser": "map4",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   "workspaceFolder": "/workspace",
   "hostRequirements": {
@@ -33,7 +33,7 @@
     "--volume=/tmp/.X11-unix/:/tmp/.X11-unix",
     "--volume=/etc/localtime:/etc/localtime:ro",
     "--volume=/dev/dri:/dev/dri:ro",
-    "--volume=/home/pe/iSSD1/ntt_smartpole/fy25:/workspace/data:rw",
+    "--volume=/data/sata0_8T/ntt/fy25:/workspace/data:rw",
     "--gpus",
     "all",
     "--shm-size=64gb"
@@ -63,4 +63,4 @@
       ]
     }
   }
-} 
+}
