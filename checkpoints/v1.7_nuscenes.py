@@ -81,7 +81,7 @@ custom_imports = dict(
         'autoware_ml.hooks',
     ])
 data_prefix = dict(pts='samples/LIDAR_TOP', sweeps='samples/LIDAR_TOP')
-data_root = 'data/tier4_dataset/'
+data_root = 'data/nuscenes_dataset/'
 dataset_test_groups = dict(
     db_base='t4dataset_base_infos_test.pkl',
     db_j6='t4dataset_x2_infos_test.pkl',
@@ -108,7 +108,7 @@ default_hooks = dict(
     checkpoint=dict(
         interval=1,
         max_keep_ckpts=10,
-        save_best='NuScenes metric/mAP',
+        # save_best='NuScenes metric/mAP',
         type='CheckpointHook'),
     logger=dict(interval=50, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
@@ -304,7 +304,7 @@ model = dict(
         loss_cls=dict(
             loss_weight=1.0,
             reduction='none',
-            type='mmdet.GaussianFocalLoss'),
+            type='mmdet.AmpGaussianFocalLoss'),
         norm_bbox=True,
         separate_head=dict(
             final_kernel=1, init_bias=-4.595, type='CustomSeparateHead'),
@@ -494,7 +494,7 @@ name_mapping = dict({
     'wheelchair': 'pedestrian'
 })
 num_class = 5
-num_workers = 32
+num_workers = 12
 optim_wrapper = dict(
     clip_grad=dict(max_norm=15, norm_type=2),
     dtype='float16',
@@ -554,7 +554,7 @@ sync_bn = 'torch'
 test_batch_size = 2
 test_cfg = dict()
 test_dataloader = dict(
-    batch_size=2,
+    batch_size=6,
     dataset=dict(
         ann_file='nuscenes_infos_val.pkl',
         backend_args=None,
@@ -621,27 +621,14 @@ test_dataloader = dict(
         ],
         test_mode=True,
         type='T4Dataset'),
-    num_workers=32,
+    num_workers=12,
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
 test_evaluator = dict(
-    ann_file=
-    'nuscenes_infos_val.pkl',
+    ann_file='data/nuscenes/nuscenes_infos_val.pkl',
     backend_args=None,
-    class_names=[
-        'car',
-        'truck',
-        'bus',
-        'bicycle',
-        'pedestrian',
-    ],
     data_root='data/nuscenes/',
-    dataset_name='db_base',
-    eval_class_range=dict(
-        bicycle=121, bus=121, car=121, pedestrian=121, truck=121),
-    filter_attributes=[],
     metric='bbox',
-    save_csv=True,
     type='NuScenesMetric')
 test_pipeline = [
     dict(
@@ -651,7 +638,7 @@ test_pipeline = [
         type='LoadPointsFromFile',
         use_dim=5),
     dict(
-        backend_args=None,
+        backend_args=None, 
         load_dim=5,
         pad_empty_sweeps=True,
         remove_close=True,
@@ -681,7 +668,7 @@ test_pipeline = [
         ],
         type='Pack3DDetInputs'),
 ]
-train_batch_size = 8
+train_batch_size = 10
 train_cfg = dict(
     by_epoch=True,
     dynamic_intervals=[
@@ -693,7 +680,7 @@ train_cfg = dict(
     max_epochs=50,
     val_interval=5)
 train_dataloader = dict(
-    batch_size=8,
+    batch_size=10,
     dataset=dict(
         ann_file='nuscenes_infos_train.pkl',
         backend_args=None,
@@ -805,7 +792,7 @@ train_dataloader = dict(
         ],
         test_mode=False,
         type='T4Dataset'),
-    num_workers=32,
+    num_workers=12,
     persistent_workers=True,
     sampler=dict(shuffle=True, type='DefaultSampler'))
 train_gpu_size = 4
@@ -891,7 +878,7 @@ train_pipeline = [
 ]
 val_cfg = dict()
 val_dataloader = dict(
-    batch_size=2,
+    batch_size=6,
     dataset=dict(
         ann_file='nuscenes_infos_val.pkl',
         backend_args=None,
@@ -904,7 +891,7 @@ val_dataloader = dict(
             'pedestrian',
         ],
         data_prefix=dict(pts='samples/LIDAR_TOP', sweeps='samples/LIDAR_TOP'),
-        data_root='data/tier4_dataset/',
+        data_root='data/nuscenes',
         metainfo=dict(classes=[
             'car',
             'truck',
@@ -958,24 +945,14 @@ val_dataloader = dict(
         ],
         test_mode=True,
         type='T4Dataset'),
-    num_workers=32,
+    num_workers=12,
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
 val_evaluator = dict(
     ann_file=
-    'nuscenes_infos_val.pkl',
+    'data/nuscenes/nuscenes_infos_val.pkl',
     backend_args=None,
-    class_names=[
-        'car',
-        'truck',
-        'bus',
-        'bicycle',
-        'pedestrian',
-    ],
-    data_root='data/nuscenes/',
-    eval_class_range=dict(
-        bicycle=121, bus=121, car=121, pedestrian=121, truck=121),
-    filter_attributes=[],
+    data_root='data/nuscenes',
     metric='bbox',
     type='NuScenesMetric')
 val_interval = 5
