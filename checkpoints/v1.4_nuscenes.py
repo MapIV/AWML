@@ -151,7 +151,7 @@ lidar_sweep_dims = [
     2,
     4,
 ]
-load_from = 'checkpoints/centerpoint_v1.4_best_epoch.pth'
+load_from = 'checkpoints/AWML_centerpoint_v1.4_best_epoch_49.pth'
 log_level = 'INFO'
 log_processor = dict(by_epoch=True, type='LogProcessor', window_size=50)
 logger_interval = 50
