@@ -39,14 +39,16 @@ nus_attributes = (
     "None",
 )
 
-camera_types = [
-    "CAM_FRONT",
-    "CAM_FRONT_RIGHT",
-    # "CAM_FRONT_LEFT",
-    # "CAM_BACK",
-    # "CAM_BACK_LEFT",
-    # "CAM_BACK_RIGHT",
-]
+# camera_types = [
+#     "CAM_FRONT",
+#     "CAM_FRONT_RIGHT",
+#     # "CAM_FRONT_LEFT",
+#     # "CAM_BACK",
+#     # "CAM_BACK_LEFT",
+#     # "CAM_BACK_RIGHT",
+# ]
+
+camera_types = []
 
 
 def create_nuscenes_infos(root_path, info_prefix, version="v1.0-trainval", max_sweeps=10):
@@ -65,30 +67,54 @@ def create_nuscenes_infos(root_path, info_prefix, version="v1.0-trainval", max_s
     from nuscenes.nuscenes import NuScenes
 
     nusc = NuScenes(version=version, dataroot=root_path, verbose=True)
-    from nuscenes.utils import splits
+    # from nuscenes.utils import splits
 
-    available_vers = ["v1.0-trainval", "v1.0-test", "v1.0-mini"]
-    assert version in available_vers
-    if version == "v1.0-trainval":
-        train_scenes = splits.train
-        val_scenes = splits.val
-    elif version == "v1.0-test":
-        train_scenes = splits.test
-        val_scenes = []
-    elif version == "v1.0-mini":
-        train_scenes = splits.mini_train
-        val_scenes = splits.mini_val
-    else:
-        raise ValueError("unknown")
+    # available_vers = ["v1.0-trainval", "v1.0-test", "v1.0-mini"]
+    # assert version in available_vers
+    # if version == "v1.0-trainval":
+    #     train_scenes = splits.train
+    #     val_scenes = splits.val
+    # elif version == "v1.0-test":
+    #     train_scenes = splits.test
+    #     val_scenes = []
+    # elif version == "v1.0-mini":
+    #     train_scenes = splits.mini_train
+    #     val_scenes = splits.mini_val
+    # else:
+    #     raise ValueError("unknown")
 
-    # filter existing scenes.
+    # # filter existing scenes.
+    # available_scenes = get_available_scenes(nusc)
+    # available_scene_names = [s["name"] for s in available_scenes]
+    # train_scenes = list(filter(lambda x: x in available_scene_names, train_scenes))
+    # val_scenes = list(filter(lambda x: x in available_scene_names, val_scenes))
+    # train_scenes = set([available_scenes[available_scene_names.index(s)]["token"] for s in train_scenes])
+    # val_scenes = set([available_scenes[available_scene_names.index(s)]["token"] for s in val_scenes])
+
+    import os
+    from os import path as osp
+
+    split_dir = osp.join(root_path, "splits")
+    train_list = osp.join(split_dir, "train_scenes.txt")
+    val_list   = osp.join(split_dir, "val_scenes.txt")
+
+    def _read_list(p):
+        if osp.exists(p):
+            with open(p) as f:
+                return [ln.strip() for ln in f if ln.strip()]
+        return []
+
+    train_names = set(_read_list(train_list))
+    val_names   = set(_read_list(val_list))
+
+    # Lấy các scene thực sự tồn tại trong data
     available_scenes = get_available_scenes(nusc)
-    available_scene_names = [s["name"] for s in available_scenes]
-    train_scenes = list(filter(lambda x: x in available_scene_names, train_scenes))
-    val_scenes = list(filter(lambda x: x in available_scene_names, val_scenes))
-    train_scenes = set([available_scenes[available_scene_names.index(s)]["token"] for s in train_scenes])
-    val_scenes = set([available_scenes[available_scene_names.index(s)]["token"] for s in val_scenes])
+    name2token = {s["name"]: s["token"] for s in available_scenes}
 
+    # Map name -> token; chỉ giữ những tên có thật
+    train_scenes = {name2token[n] for n in train_names if n in name2token}
+    val_scenes   = {name2token[n] for n in val_names   if n in name2token}
+    
     test = "test" in version
     if test:
         print("test scene: {}".format(len(train_scenes)))
@@ -100,17 +126,30 @@ def create_nuscenes_infos(root_path, info_prefix, version="v1.0-trainval", max_s
 
     metadata = dict(version=version)
     if test:
+        # print("test sample: {}".format(len(train_nusc_infos)))
+        # data = dict(infos=train_nusc_infos, metadata=metadata)
+        # info_path = osp.join(root_path, "{}_infos_test.pkl".format(info_prefix))
+        # mmengine.dump(data, info_path)
+        
         print("test sample: {}".format(len(train_nusc_infos)))
         data = dict(infos=train_nusc_infos, metadata=metadata)
-        info_path = osp.join(root_path, "{}_infos_test.pkl".format(info_prefix))
+        info_path = osp.join(root_path, f"{info_prefix}_infos_test.pkl")
         mmengine.dump(data, info_path)
     else:
+        # print("train sample: {}, val sample: {}".format(len(train_nusc_infos), len(val_nusc_infos)))
+        # data = dict(infos=train_nusc_infos, metadata=metadata)
+        # info_path = osp.join(root_path, "{}_infos_train.pkl".format(info_prefix))
+        # mmengine.dump(data, info_path)
+        # data["infos"] = val_nusc_infos
+        # info_val_path = osp.join(root_path, "{}_infos_val.pkl".format(info_prefix))
+        # mmengine.dump(data, info_val_path)
+        
         print("train sample: {}, val sample: {}".format(len(train_nusc_infos), len(val_nusc_infos)))
         data = dict(infos=train_nusc_infos, metadata=metadata)
-        info_path = osp.join(root_path, "{}_infos_train.pkl".format(info_prefix))
+        info_path = osp.join(root_path, f"{info_prefix}_infos_train.pkl")
         mmengine.dump(data, info_path)
         data["infos"] = val_nusc_infos
-        info_val_path = osp.join(root_path, "{}_infos_val.pkl".format(info_prefix))
+        info_val_path = osp.join(root_path, f"{info_prefix}_infos_val.pkl")
         mmengine.dump(data, info_val_path)
 
 

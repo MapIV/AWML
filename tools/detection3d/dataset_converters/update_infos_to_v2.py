@@ -224,14 +224,17 @@ def clear_data_info_unused_keys(data_info):
 def generate_nuscenes_camera_instances(info, nusc):
 
     # get bbox annotations for camera
-    camera_types = [
-        "CAM_FRONT",
-        "CAM_FRONT_RIGHT",
-        # "CAM_FRONT_LEFT",
-        # "CAM_BACK",
-        # "CAM_BACK_LEFT",
-        # "CAM_BACK_RIGHT",
-    ]
+    # get bbox annotations for camera
+    # camera_types = [
+    #     "CAM_FRONT",
+    #     "CAM_FRONT_RIGHT",
+    #     # "CAM_FRONT_LEFT",
+    #     # "CAM_BACK",
+    #     # "CAM_BACK_LEFT",
+    #     # "CAM_BACK_RIGHT",
+    # ]
+    
+    camera_types = []
 
     empty_multicamera_instance = get_empty_multicamera_instances(camera_types)
 
@@ -245,14 +248,15 @@ def generate_nuscenes_camera_instances(info, nusc):
 
 
 def update_nuscenes_infos(pkl_path, out_dir):
-    camera_types = [
-        "CAM_FRONT",
-        "CAM_FRONT_RIGHT",
-        "CAM_FRONT_LEFT",
-        "CAM_BACK",
-        "CAM_BACK_LEFT",
-        "CAM_BACK_RIGHT",
-    ]
+    # camera_types = [
+    #     "CAM_FRONT",
+    #     "CAM_FRONT_RIGHT",
+    #     "CAM_FRONT_LEFT",
+    #     "CAM_BACK",
+    #     "CAM_BACK_LEFT",
+    #     "CAM_BACK_RIGHT",
+    # ]
+    camera_types = []
     print(f"{pkl_path} will be modified.")
     if out_dir in pkl_path:
         print(f"Warning, you may overwriting " f"the original data {pkl_path}.")
@@ -284,7 +288,15 @@ def update_nuscenes_infos(pkl_path, out_dir):
             ori_info_dict["ego2global_rotation"], ori_info_dict["ego2global_translation"]
         )
         temp_data_info["lidar_points"]["num_pts_feats"] = ori_info_dict.get("num_features", 5)
+        
         temp_data_info["lidar_points"]["lidar_path"] = Path(ori_info_dict["lidar_path"]).name
+        #--------------------------------------------------#
+        # p = str(ori_info_dict["lidar_path"])
+        # if p.startswith("./data/nuscenes/"):
+        #     p = p[len("./data/nuscenes/"):]
+
+        # temp_data_info["lidar_points"]["lidar_path"] = p.replace('samples/LIDAR_TOP/','')
+        #--------------------------------------------------#
         temp_data_info["lidar_points"]["lidar2ego"] = convert_quaternion_to_matrix(
             ori_info_dict["lidar2ego_rotation"], ori_info_dict["lidar2ego_translation"]
         )
@@ -305,7 +317,14 @@ def update_nuscenes_infos(pkl_path, out_dir):
             lidar2sensor[:3, 3:4] = -1 * np.matmul(rot.T, trans.reshape(3, 1))
             temp_lidar_sweep["lidar_points"]["lidar2sensor"] = lidar2sensor.astype(np.float32).tolist()
             temp_lidar_sweep["timestamp"] = ori_sweep["timestamp"] / 1e6
+            
             temp_lidar_sweep["lidar_points"]["lidar_path"] = Path(ori_sweep["data_path"]).name
+            #--------------------------------------------------#
+            # q = str(ori_sweep["data_path"])
+            # if q.startswith("./data/nuscenes/"):
+            #     q = q[len("./data/nuscenes/"):]
+            # temp_lidar_sweep["lidar_points"]["lidar_path"] = q.replace('sweeps/LIDAR_TOP/','')
+            #--------------------------------------------------#
             temp_lidar_sweep["sample_data_token"] = ori_sweep["sample_data_token"]
             temp_data_info["lidar_sweeps"].append(temp_lidar_sweep)
         temp_data_info["images"] = {}
