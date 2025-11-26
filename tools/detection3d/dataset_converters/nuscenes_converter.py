@@ -90,30 +90,6 @@ def create_nuscenes_infos(root_path, info_prefix, version="v1.0-trainval", max_s
     val_scenes = list(filter(lambda x: x in available_scene_names, val_scenes))
     train_scenes = set([available_scenes[available_scene_names.index(s)]["token"] for s in train_scenes])
     val_scenes = set([available_scenes[available_scene_names.index(s)]["token"] for s in val_scenes])
-
-    # import os
-    # from os import path as osp
-
-    # split_dir = osp.join(root_path, "splits")
-    # train_list = osp.join(split_dir, "train_scenes.txt")
-    # val_list   = osp.join(split_dir, "val_scenes.txt")
-
-    # def _read_list(p):
-    #     if osp.exists(p):
-    #         with open(p) as f:
-    #             return [ln.strip() for ln in f if ln.strip()]
-    #     return []
-
-    # train_names = set(_read_list(train_list))
-    # val_names   = set(_read_list(val_list))
-
-    # # Lấy các scene thực sự tồn tại trong data
-    # available_scenes = get_available_scenes(nusc)
-    # name2token = {s["name"]: s["token"] for s in available_scenes}
-
-    # # Map name -> token; chỉ giữ những tên có thật
-    # train_scenes = {name2token[n] for n in train_names if n in name2token}
-    # val_scenes   = {name2token[n] for n in val_names   if n in name2token}
     
     test = "test" in version
     if test:

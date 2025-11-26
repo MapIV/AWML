@@ -13,9 +13,9 @@ classes=[
     'bicycle',
     'pedestrian',
 ]
-train_batch_size = 2
-val_batch_size = 1
-work_dir = 'work_dirs/centerpoint/'
+train_batch_size = 6
+val_batch_size = 4
+work_dir = 'work_dirs/centerpoint_carla/'
 lr=0.001
 max_epoch=80
 
